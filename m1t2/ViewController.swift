@@ -22,15 +22,31 @@ class ViewController: UIViewController {
         button1.center.y=100
         button2.center.y=200
         button3.center.y=300
+        button3.addTarget(self, action: #selector(button3Tapped), for: .touchUpInside)
         view.addSubview(button1)
         view.addSubview(button2)
         view.addSubview(button3)
     }
     
-    override func viewDidLayoutSubviews() {
-        button1.center.y=100
-        button2.center.y=200
-        button3.center.y=300
+    @objc func button3Tapped() {
+        showModal()
+    }
+    func showModal() {
+        for subview in view.subviews {
+            if let button = subview as? MyButton {
+                button.backgroundColor = UIColor.gray.withAlphaComponent(0.5)
+            }
+        }
+        let modalController = ModalViewController()
+        modalController.modalPresentationStyle = .overFullScreen
+        modalController.dismissHandler = {
+            for subview in self.view.subviews {
+                if let button = subview as? MyButton {
+                    button.backgroundColor = .blue
+                }
+            }
+        }
+        present(modalController, animated: true, completion: nil)
     }
 }
 class MyButton: UIButton{
@@ -43,7 +59,7 @@ class MyButton: UIButton{
         initViews()
     }
     @objc private func buttonPressed(_ sender: UIButton) {
-        UIView.animate(withDuration: 0.1, delay: 0, options: [.beginFromCurrentState, .curveEaseInOut], animations: {
+        UIView.animate(withDuration: 0.2, delay: 0, options: [.beginFromCurrentState, .curveEaseInOut], animations: {
             self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
         }, completion: nil)
     }
@@ -78,3 +94,45 @@ class MyButton: UIButton{
     }
 }
 
+
+class ModalViewController: UIViewController {
+    
+    var dismissHandler: (() -> Void)?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        view.backgroundColor = UIColor.white.withAlphaComponent(0.9)
+        
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "This is a modal view controller"
+        label.font = UIFont.systemFont(ofSize: 24, weight: .bold)
+        label.textColor = .black
+        view.addSubview(label)
+        
+        let closeButton = UIButton()
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
+        closeButton.setTitle("Close", for: .normal)
+        closeButton.setTitleColor(.white, for: .normal)
+        closeButton.backgroundColor = .blue
+        closeButton.layer.cornerRadius = 8
+        closeButton.addTarget(self, action: #selector(closeButtonPressed), for: .touchUpInside)
+        view.addSubview(closeButton)
+        
+        label.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        label.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        
+        closeButton.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 20).isActive = true
+        closeButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        closeButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        closeButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
+    }
+    
+    @objc private func closeButtonPressed() {
+        dismiss(animated: true) {
+            self.dismissHandler?()
+        }
+    }
+    
+}
