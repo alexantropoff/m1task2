@@ -29,16 +29,13 @@ class ViewController: UIViewController {
     }
     
     @objc func button3Tapped() {
-        showModal()
-    }
-    func showModal() {
         for subview in view.subviews {
             if let button = subview as? MyButton {
-                button.backgroundColor = UIColor.gray.withAlphaComponent(0.5)
+                button.backgroundColor = UIColor.gray
             }
         }
         let modalController = ModalViewController()
-        modalController.modalPresentationStyle = .overFullScreen
+        
         modalController.dismissHandler = {
             for subview in self.view.subviews {
                 if let button = subview as? MyButton {
@@ -101,31 +98,14 @@ class ModalViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-      //  view.backgroundColor = UIColor.white.withAlphaComponent(0.9)
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissModal))
-        view.addGestureRecognizer(tapGesture)
-        let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipeGesture(_:)))
-        view.addGestureRecognizer(swipeGesture)
-    }
-    @objc private func handleSwipeGesture(_ gesture: UISwipeGestureRecognizer) {
-        switch gesture.direction {
-        case .up, .down:
-            dismiss(animated: true) {
-                self.dismissHandler?()
-            }
-            break
-        case .left, .right:
-            break
-            // Ignore swipes up and down
-        default:
-            break
-        }
-    }
-    @objc private func dismissModal() {
-        dismiss(animated: true) {
-            self.dismissHandler?()
-        }
+        modalPresentationStyle = .pageSheet
+        view.backgroundColor = .white
+        self.presentationController?.delegate = self
     }
     
+}
+extension ModalViewController: UIAdaptivePresentationControllerDelegate {
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController){
+        self.dismissHandler?()
+    }
 }
