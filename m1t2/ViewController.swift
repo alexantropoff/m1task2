@@ -13,18 +13,15 @@ class ViewController: UIViewController {
     let button3=MyButton()
     override func viewDidLoad() {
         super.viewDidLoad()
-        button1.center.y=100
-        button2.center.y=200
-        button3.center.y=300
-        button1.setTitle("Button11", for: .normal)
-        button2.setTitle("Button11111111111", for: .normal)
-        button3.setTitle("Button222", for: .normal)
-        button1.sizeToFit()
-        button2.sizeToFit()
-        button3.sizeToFit()
+        button1.setTitleAndFit("Button11")
+        button2.setTitleAndFit("Button11122221111")
+        button3.setTitleAndFit("Button333")
         button1.center.x=view.frame.width/2
         button2.center.x=view.frame.width/2
         button3.center.x=view.frame.width/2
+        button1.center.y=100
+        button2.center.y=200
+        button3.center.y=300
         view.addSubview(button1)
         view.addSubview(button2)
         view.addSubview(button3)
@@ -55,6 +52,10 @@ class MyButton: UIButton{
         UIView.animate(withDuration: 0.2, delay: 0, options: [.beginFromCurrentState, .curveEaseInOut], animations: {
             self.transform = .identity
         }, completion: nil)
+    }
+    func setTitleAndFit(_ title:String){
+        setTitle(title, for: .normal)
+        sizeToFit()
     }
     private func initViews(){
         //     translatesAutoresizingMaskIntoConstraints = false
