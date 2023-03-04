@@ -102,34 +102,27 @@ class ModalViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor.white.withAlphaComponent(0.9)
-        
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "This is a modal view controller"
-        label.font = UIFont.systemFont(ofSize: 24, weight: .bold)
-        label.textColor = .black
-        view.addSubview(label)
-        
-        let closeButton = UIButton()
-        closeButton.translatesAutoresizingMaskIntoConstraints = false
-        closeButton.setTitle("Close", for: .normal)
-        closeButton.setTitleColor(.white, for: .normal)
-        closeButton.backgroundColor = .blue
-        closeButton.layer.cornerRadius = 8
-        closeButton.addTarget(self, action: #selector(closeButtonPressed), for: .touchUpInside)
-        view.addSubview(closeButton)
-        
-        label.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        label.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        
-        closeButton.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 20).isActive = true
-        closeButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        closeButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        closeButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
+      //  view.backgroundColor = UIColor.white.withAlphaComponent(0.9)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissModal))
+        view.addGestureRecognizer(tapGesture)
+        let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipeGesture(_:)))
+        view.addGestureRecognizer(swipeGesture)
     }
-    
-    @objc private func closeButtonPressed() {
+    @objc private func handleSwipeGesture(_ gesture: UISwipeGestureRecognizer) {
+        switch gesture.direction {
+        case .up, .down:
+            dismiss(animated: true) {
+                self.dismissHandler?()
+            }
+            break
+        case .left, .right:
+            break
+            // Ignore swipes up and down
+        default:
+            break
+        }
+    }
+    @objc private func dismissModal() {
         dismiss(animated: true) {
             self.dismissHandler?()
         }
