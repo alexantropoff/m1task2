@@ -45,12 +45,17 @@ class MyButton: UIButton{
         super.init(coder: coder)
         initViews()
     }
-    /* override var intrinsicContentSize: CGSize {
-     let labelSize = titleLabel?.sizeThatFits(CGSize(width: frame.size.width, height: CGFloat.greatestFiniteMagnitude)) ?? .zero
-     let desiredButtonSize = CGSize(width: labelSize.width + titleEdgeInsets.left + titleEdgeInsets.right, height: labelSize.height + titleEdgeInsets.top + titleEdgeInsets.bottom)
-     
-     return desiredButtonSize
-     }*/
+    @objc private func buttonPressed(_ sender: UIButton) {
+        UIView.animate(withDuration: 0.1, delay: 0, options: [.beginFromCurrentState, .curveEaseInOut], animations: {
+            self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+        }, completion: nil)
+    }
+    
+    @objc private func buttonReleased(_ sender: UIButton) {
+        UIView.animate(withDuration: 0.2, delay: 0, options: [.beginFromCurrentState, .curveEaseInOut], animations: {
+            self.transform = .identity
+        }, completion: nil)
+    }
     private func initViews(){
         //     translatesAutoresizingMaskIntoConstraints = false
         backgroundColor = .blue
@@ -66,6 +71,9 @@ class MyButton: UIButton{
         setImage(UIImage(systemName: "arrow.forward.circle.fill"), for: .normal)
         imageEdgeInsets=UIEdgeInsets(top: 0, left: 8, bottom: 0, right: -8)
         semanticContentAttribute = .forceRightToLeft
+        addTarget(self, action: #selector(buttonPressed(_:)), for: .touchDown)
+        addTarget(self, action: #selector(buttonReleased(_:)), for: .touchUpInside)
+        addTarget(self, action: #selector(buttonReleased(_:)), for: .touchCancel)
     }
 }
 
