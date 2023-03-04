@@ -20,8 +20,8 @@ class ViewController: UIViewController {
         button2.center.x=view.frame.width/2
         button3.center.x=view.frame.width/2
         button1.center.y=100
-        button2.center.y=200
-        button3.center.y=300
+        button2.center.y=150
+        button3.center.y=200
         button3.addTarget(self, action: #selector(button3Tapped), for: .touchUpInside)
         view.addSubview(button1)
         view.addSubview(button2)
@@ -29,23 +29,26 @@ class ViewController: UIViewController {
     }
     
     @objc func button3Tapped() {
-        for subview in view.subviews {
-            if let button = subview as? MyButton {
-                button.backgroundColor = UIColor.gray
-            }
-        }
-        let modalController = ModalViewController()
+        button1.backgroundColor = .gray
+        button2.backgroundColor = .gray
+        button3.backgroundColor = .gray
         
-        modalController.dismissHandler = {
-            for subview in self.view.subviews {
-                if let button = subview as? MyButton {
-                    button.backgroundColor = .blue
-                }
-            }
-        }
+        let modalController = UIViewController()
+        modalController.modalPresentationStyle = .pageSheet
+        modalController.view.backgroundColor = .white
+        modalController.presentationController?.delegate = self
         present(modalController, animated: true, completion: nil)
     }
 }
+
+extension ViewController: UIAdaptivePresentationControllerDelegate {
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController){
+        button1.backgroundColor = .blue
+        button2.backgroundColor = .blue
+        button3.backgroundColor = .blue
+    }
+}
+
 class MyButton: UIButton{
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -91,21 +94,3 @@ class MyButton: UIButton{
     }
 }
 
-
-class ModalViewController: UIViewController {
-    
-    var dismissHandler: (() -> Void)?
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        modalPresentationStyle = .pageSheet
-        view.backgroundColor = .white
-        self.presentationController?.delegate = self
-    }
-    
-}
-extension ModalViewController: UIAdaptivePresentationControllerDelegate {
-    func presentationControllerDidDismiss(_ presentationController: UIPresentationController){
-        self.dismissHandler?()
-    }
-}
