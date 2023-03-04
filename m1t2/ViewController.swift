@@ -20,8 +20,8 @@ class ViewController: UIViewController {
         button2.center.x=view.frame.width/2
         button3.center.x=view.frame.width/2
         button1.center.y=100
-        button2.center.y=150
-        button3.center.y=200
+        button2.center.y=200
+        button3.center.y=300
         button3.addTarget(self, action: #selector(button3Tapped), for: .touchUpInside)
         view.addSubview(button1)
         view.addSubview(button2)
@@ -29,12 +29,25 @@ class ViewController: UIViewController {
     }
     
     @objc func button3Tapped() {
-        let modalController = UIViewController()
-        modalController.modalPresentationStyle = .pageSheet
-        modalController.view.backgroundColor = .white
+        showModal()
+    }
+    func showModal() {
+        for subview in view.subviews {
+            if let button = subview as? MyButton {
+                button.backgroundColor = UIColor.gray.withAlphaComponent(0.5)
+            }
+        }
+        let modalController = ModalViewController()
+        modalController.modalPresentationStyle = .overFullScreen
+        modalController.dismissHandler = {
+            for subview in self.view.subviews {
+                if let button = subview as? MyButton {
+                    button.backgroundColor = .blue
+                }
+            }
+        }
         present(modalController, animated: true, completion: nil)
     }
-    
 }
 class MyButton: UIButton{
     override init(frame: CGRect) {
@@ -61,18 +74,58 @@ class MyButton: UIButton{
         sizeToFit()
     }
     private func initViews(){
-        var conf = UIButton.Configuration.filled()
-        conf.baseBackgroundColor = .blue
-        conf.baseForegroundColor = .white
-        conf.image=UIImage(systemName: "arrow.forward.circle.fill")
-        conf.contentInsets=NSDirectionalEdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 14)
-        conf.imagePadding = 8
-        conf.cornerStyle = .medium
-        
-        self.configuration=conf
+        //     translatesAutoresizingMaskIntoConstraints = false
+        backgroundColor = .blue
+        layer.cornerRadius = 8
+        tintColor = .white
+        contentEdgeInsets = UIEdgeInsets(
+            top: 10,
+            left: 14,
+            bottom: 10,
+            right: 14+8
+        )
+        //   titleEdgeInsets = UIEdgeInsets(top: 0, left: -8, bottom: 0, right: 8)
+        setImage(UIImage(systemName: "arrow.forward.circle.fill"), for: .normal)
+        imageEdgeInsets=UIEdgeInsets(top: 0, left: 8, bottom: 0, right: -8)
         semanticContentAttribute = .forceRightToLeft
         addTarget(self, action: #selector(buttonPressed(_:)), for: .touchDown)
         addTarget(self, action: #selector(buttonReleased(_:)), for: .touchUpInside)
         addTarget(self, action: #selector(buttonReleased(_:)), for: .touchCancel)
     }
+}
+
+
+class ModalViewController: UIViewController {
+    
+    var dismissHandler: (() -> Void)?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+      //  view.backgroundColor = UIColor.white.withAlphaComponent(0.9)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissModal))
+        view.addGestureRecognizer(tapGesture)
+        let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipeGesture(_:)))
+        view.addGestureRecognizer(swipeGesture)
+    }
+    @objc private func handleSwipeGesture(_ gesture: UISwipeGestureRecognizer) {
+        switch gesture.direction {
+        case .up, .down:
+            dismiss(animated: true) {
+                self.dismissHandler?()
+            }
+            break
+        case .left, .right:
+            break
+            // Ignore swipes up and down
+        default:
+            break
+        }
+    }
+    @objc private func dismissModal() {
+        dismiss(animated: true) {
+            self.dismissHandler?()
+        }
+    }
+    
 }
