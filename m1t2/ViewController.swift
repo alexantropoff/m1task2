@@ -34,8 +34,8 @@ class ViewController: UIViewController {
         modalController.view.backgroundColor = .white
         present(modalController, animated: true, completion: nil)
     }
-    
 }
+
 class MyButton: UIButton{
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -50,7 +50,19 @@ class MyButton: UIButton{
             self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
         }, completion: nil)
     }
-    
+    override func tintColorDidChange(){
+        super.tintColorDidChange()
+        var grayscale: CGFloat = 0
+        var alpha: CGFloat = 0
+        if tintColor.getWhite(&grayscale, alpha: &alpha) {
+            if(alpha<1.0){
+                backgroundColor = .gray
+            }else{
+                backgroundColor = .blue
+            }
+        }
+    }
+   
     @objc private func buttonReleased(_ sender: UIButton) {
         UIView.animate(withDuration: 0.2, delay: 0, options: [.beginFromCurrentState, .curveEaseInOut], animations: {
             self.transform = .identity
@@ -61,18 +73,23 @@ class MyButton: UIButton{
         sizeToFit()
     }
     private func initViews(){
-        var conf = UIButton.Configuration.filled()
-        conf.baseBackgroundColor = .blue
-        conf.baseForegroundColor = .white
-        conf.image=UIImage(systemName: "arrow.forward.circle.fill")
-        conf.contentInsets=NSDirectionalEdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 14)
-        conf.imagePadding = 8
-        conf.cornerStyle = .medium
         
-        self.configuration=conf
+        backgroundColor = .blue
+        layer.cornerRadius = 8
+        tintColor = .white
+        contentEdgeInsets = UIEdgeInsets(
+            top: 10,
+            left: 14,
+            bottom: 10,
+            right: 14+8
+        )
+        //   titleEdgeInsets = UIEdgeInsets(top: 0, left: -8, bottom: 0, right: 8)
+        setImage(UIImage(systemName: "arrow.forward.circle.fill"), for: .normal)
+        imageEdgeInsets=UIEdgeInsets(top: 0, left: 8, bottom: 0, right: -8)
         semanticContentAttribute = .forceRightToLeft
         addTarget(self, action: #selector(buttonPressed(_:)), for: .touchDown)
         addTarget(self, action: #selector(buttonReleased(_:)), for: .touchUpInside)
         addTarget(self, action: #selector(buttonReleased(_:)), for: .touchCancel)
     }
 }
+
