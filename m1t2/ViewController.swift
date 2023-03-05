@@ -52,7 +52,7 @@ class MyButton: UIButton{
     }
     override func tintColorDidChange(){
         super.tintColorDidChange()
-        if (  tintColor.cgColor.alpha < 1.0){
+        if(tintAdjustmentMode == .dimmed){
             backgroundColor = .gray
         }else{
             backgroundColor = .blue
