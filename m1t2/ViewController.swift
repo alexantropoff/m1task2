@@ -29,26 +29,13 @@ class ViewController: UIViewController {
     }
     
     @objc func button3Tapped() {
-        button1.backgroundColor = .gray
-        button2.backgroundColor = .gray
-        button3.backgroundColor = .gray
-        
         let modalController = UIViewController()
         modalController.modalPresentationStyle = .pageSheet
         modalController.view.backgroundColor = .white
-        modalController.presentationController?.delegate = self
         present(modalController, animated: true, completion: nil)
     }
+    
 }
-
-extension ViewController: UIAdaptivePresentationControllerDelegate {
-    func presentationControllerDidDismiss(_ presentationController: UIPresentationController){
-        button1.backgroundColor = .blue
-        button2.backgroundColor = .blue
-        button3.backgroundColor = .blue
-    }
-}
-
 class MyButton: UIButton{
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -74,23 +61,18 @@ class MyButton: UIButton{
         sizeToFit()
     }
     private func initViews(){
-        //     translatesAutoresizingMaskIntoConstraints = false
-        backgroundColor = .blue
-        layer.cornerRadius = 8
-        tintColor = .white
-        contentEdgeInsets = UIEdgeInsets(
-            top: 10,
-            left: 14,
-            bottom: 10,
-            right: 14+8
-        )
-        //   titleEdgeInsets = UIEdgeInsets(top: 0, left: -8, bottom: 0, right: 8)
-        setImage(UIImage(systemName: "arrow.forward.circle.fill"), for: .normal)
-        imageEdgeInsets=UIEdgeInsets(top: 0, left: 8, bottom: 0, right: -8)
+        var conf = UIButton.Configuration.filled()
+        conf.baseBackgroundColor = .blue
+        conf.baseForegroundColor = .white
+        conf.image=UIImage(systemName: "arrow.forward.circle.fill")
+        conf.contentInsets=NSDirectionalEdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 14)
+        conf.imagePadding = 8
+        conf.cornerStyle = .medium
+        
+        self.configuration=conf
         semanticContentAttribute = .forceRightToLeft
         addTarget(self, action: #selector(buttonPressed(_:)), for: .touchDown)
         addTarget(self, action: #selector(buttonReleased(_:)), for: .touchUpInside)
         addTarget(self, action: #selector(buttonReleased(_:)), for: .touchCancel)
     }
 }
-
