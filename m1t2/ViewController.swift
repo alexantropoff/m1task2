@@ -22,7 +22,7 @@ class ViewController: UIViewController {
         button1.center.y=100
         button2.center.y=150
         button3.center.y=200
-        button3.addTarget(self, action: #selector(button3Tapped), for: .touchUpInside)
+        button3.addTarget(self, action: #selector(button3Tapped), for: .touchDown)
         view.addSubview(button1)
         view.addSubview(button2)
         view.addSubview(button3)
