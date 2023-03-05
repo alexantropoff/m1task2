@@ -52,17 +52,13 @@ class MyButton: UIButton{
     }
     override func tintColorDidChange(){
         super.tintColorDidChange()
-        var grayscale: CGFloat = 0
-        var alpha: CGFloat = 0
-        if tintColor.getWhite(&grayscale, alpha: &alpha) {
-            if(alpha<1.0){
-                backgroundColor = .gray
-            }else{
-                backgroundColor = .blue
-            }
+        if (  tintColor.cgColor.alpha < 1.0){
+            backgroundColor = .gray
+        }else{
+            backgroundColor = .blue
         }
     }
-   
+    
     @objc private func buttonReleased(_ sender: UIButton) {
         UIView.animate(withDuration: 0.2, delay: 0, options: [.beginFromCurrentState, .curveEaseInOut], animations: {
             self.transform = .identity
