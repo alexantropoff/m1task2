@@ -55,32 +55,29 @@ class MyButton: UIButton{
             backgroundColor = .blue
         }
     }
-    
-    @objc private func buttonPressed(_ sender: UIButton) {
+    private func animate(_ pressed: Bool){
         if animator.isRunning {
             animator.stopAnimation(true)
         }
         animator.addAnimations {
-            self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            self.transform = pressed ? CGAffineTransform(scaleX: 0.9, y: 0.9):.identity
         }
         animator.startAnimation()
+        
+    }
+    @objc private func buttonPressed(_ sender: UIButton) {
+        animate(true)
     }
     
     @objc private func buttonReleased(_ sender: UIButton) {
-        if animator.isRunning {
-            animator.stopAnimation(true)
-        }
-        animator.addAnimations {
-            self.transform = .identity
-        }
-        animator.startAnimation()
+        animate(false)
     }
     func setTitleAndFit(_ title:String){
         setTitle(title, for: .normal)
         sizeToFit()
     }
     private func initViews(){
-        animator = UIViewPropertyAnimator(duration: 1.0, curve: .easeInOut)
+        animator = UIViewPropertyAnimator(duration: 0.3, curve: .easeInOut)
         backgroundColor = .blue
         layer.cornerRadius = 8
         tintColor = .white
