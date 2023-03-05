@@ -37,6 +37,7 @@ class ViewController: UIViewController {
 }
 
 class MyButton: UIButton{
+    var animator: UIViewPropertyAnimator!
     override init(frame: CGRect) {
         super.init(frame: frame)
         initViews()
@@ -45,11 +46,7 @@ class MyButton: UIButton{
         super.init(coder: coder)
         initViews()
     }
-    @objc private func buttonPressed(_ sender: UIButton) {
-        UIView.animate(withDuration: 0.2, delay: 0, options: [.beginFromCurrentState, .curveEaseInOut], animations: {
-            self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
-        }, completion: nil)
-    }
+    
     override func tintColorDidChange(){
         super.tintColorDidChange()
         if(tintAdjustmentMode == .dimmed){
@@ -59,17 +56,31 @@ class MyButton: UIButton{
         }
     }
     
+    @objc private func buttonPressed(_ sender: UIButton) {
+        if animator.isRunning {
+            animator.stopAnimation(true)
+        }
+        animator.addAnimations {
+            self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+        }
+        animator.startAnimation()
+    }
+    
     @objc private func buttonReleased(_ sender: UIButton) {
-        UIView.animate(withDuration: 0.2, delay: 0, options: [.beginFromCurrentState, .curveEaseInOut], animations: {
+        if animator.isRunning {
+            animator.stopAnimation(true)
+        }
+        animator.addAnimations {
             self.transform = .identity
-        }, completion: nil)
+        }
+        animator.startAnimation()
     }
     func setTitleAndFit(_ title:String){
         setTitle(title, for: .normal)
         sizeToFit()
     }
     private func initViews(){
-        
+        animator = UIViewPropertyAnimator(duration: 1.0, curve: .easeInOut)
         backgroundColor = .blue
         layer.cornerRadius = 8
         tintColor = .white
